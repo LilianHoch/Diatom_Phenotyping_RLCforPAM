@@ -1,6 +1,5 @@
-
 TS=50ms
-;Lili RLC w/ fast+slow relaxing NPQ
+ TS=50ms
 ;Rapid light curve in Actinic light 2 for TOMI-2
 ;protocol body
 ;version May 20, 2015
@@ -15,33 +14,46 @@ Act1=0
 include default.inc  ;Includes standard options, do not remove it !
 include light.inc  ;Includes standard options, do not remove it !
 
-;dark incubate without protocol for 15 minutes first
-;RLC 5-1000PAR
-;1 minute of dark relaxation (integrated into the regular protocol)
-;
-
 Shutter=3
-Sensitivity=100
+Sensitivity=20.2
 Super=70.4
+
+;3 = 10.903
+;4 = 35.025
+;5 = 59.147
+;6 = 83.269
+;7 = 107.391
+;8 = 131.513
+;9 = 155.635
+;10 = 179.757
+;15 = 300.367
+;20 = 420.977
+;25 = 541.587
+;30 = 662.197
+;35 = 782.807
+;40 = 903.417
 
 __LightA=0
 __LightB=0
-I1 = 5
-I2 = 25
-I3 = 50
-I4 = 75
-I5 = 100
-I6 = 150
-I7 = 200
-I8 = 250
-I9 = 300
-I10 = 350
-I11 = 400
-I12 = 450
-I13 = 500
-I14 = 0
-I15 = 0
-__LightIntensity=<I1,I2,I3,I4,I5,I6,I7,I8,I9,I10,I11,I12,I13,I14,I15>
+I1 = 0
+I2 = 0
+I3 = 0
+I4 = 0
+I5 = 0
+I6 = 3
+I7 = 4
+I8 = 5
+I9 = 6
+I10 = 7
+I11 = 9
+I12 = 11
+I13 = 13
+I14 = 15
+I15 = 20
+I16 = 25
+I17 = 0
+I18 = 0
+__LightIntensity=<I1,I2,I3,I4,I5,I6,I7,I8,I9,I10,I11,I12,I13,I14,I15,I16,I17,I18>
 ;
 ;*** Fo Measurement **************************************************
 F0duration = 5s
@@ -54,7 +66,7 @@ F0measure = 1s
 PulseDuration = 800ms;
 Fmstart = F0duration+mfmsub_length
 ;
-<Fmstart - TS>=>SI_Act2(I25)
+<Fmstart - TS>=>SI_Act2(I18)
 <Fmstart>=>SatPulse(PulseDuration)
 <Fmstart>=>act2(PulseDuration)
 Fmstart+<200ms, 200ms + mfmsub_length .. PulseDuration-mfmsub_length>=>mfmsub
@@ -65,7 +77,7 @@ Fmstart+<200ms, 200ms + mfmsub_length .. PulseDuration-mfmsub_length>=>mfmsub
 ;
 ;*** Actinic light Exposure *******************************
 Pause = 2*TS
-ALduration = 30s
+ALduration = 60s
 ALmeasure = ALduration/6         
 ALstart1 = Fmstart + PulseDuration + Pause
 ALstart2 = ALstart1 + ALduration + Pause
@@ -83,6 +95,8 @@ ALstart13 = ALstart12 + ALduration + Pause
 ALstart14 = ALstart13 + ALduration + Pause
 ALstart15 = ALstart14 + ALduration + Pause
 ALstart16 = ALstart15 + ALduration + Pause
+ALstart17 = ALstart16 + ALduration + Pause
+ALstart18 = ALstart17 + ALduration + Pause
 ;
 <ALstart1 - TS>=>SI_Act2(I1)
 <ALstart2 - TS>=>SI_Act2(I2)
@@ -99,8 +113,11 @@ ALstart16 = ALstart15 + ALduration + Pause
 <ALstart13 - TS>=>SI_Act2(I13)
 <ALstart14 - TS>=>SI_Act2(I14)
 <ALstart15 - TS>=>SI_Act2(I15)
+<ALstart16 - TS>=>SI_Act2(I16)
+<ALstart17 - TS>=>SI_Act2(I17)
+<ALstart18 - TS>=>SI_Act2(I18)
 ;
-ALstart = <ALstart1, ALstart2, ALstart3, ALstart4, ALstart5, ALstart6, ALstart7, ALstart8, ALstart9, ALstart10, ALstart11, ALstart12, ALstart13, ALstart14, ALstart15>
+ALstart = <ALstart1, ALstart2, ALstart3, ALstart4, ALstart5, ALstart6, ALstart7, ALstart8, ALstart9, ALstart10, ALstart11, ALstart12, ALstart13, ALstart14, ALstart15, ALstart16, ALstart17, ALstart18>
 ALstart => act2(ALduration)
 ;
 ;******* Kautsky Effect Measurement **********************************
@@ -115,11 +132,11 @@ FtL = ALstart + PulseLStart - PulseDuration
 FtL#<TS, TS+mfmsub_length..PulseDuration/2>=>mfmsub
 ;
 PulseL = ALstart + PulseLStart
-PulseL - TS=> SI_Act2(I15)
+PulseL - TS=> SI_Act2(I18)
 PulseL=>SatPulse(PulseDuration)
 PulseL#<200ms, 200ms + mfmsub_length .. PulseDuration-mfmsub_length>=>mfmsub
 ;
-Last = ALstart25+ALduration+2*mfmsub_length
+Last = ALstart18+ALduration+2*mfmsub_length
 Last + <0s, 1s .. 5s>=>mfmsub
 ;--------------------------------------------------------------
 ;
@@ -167,6 +184,15 @@ Last + <0s, 1s .. 5s>=>mfmsub
 ;
 <ALstart15 + PulseLStart + PulseDuration/2>=>checkPoint,"startFm_Lss15"
 <ALstart15 + PulseLStart + PulseDuration - mfmsub_length>=>checkPoint,"endFm_Lss15";
+;
+<ALstart16 + PulseLStart + PulseDuration/2>=>checkPoint,"startFm_Lss16"
+<ALstart16 + PulseLStart + PulseDuration - mfmsub_length>=>checkPoint,"endFm_Lss16";
+;
+<ALstart17 + PulseLStart + PulseDuration/2>=>checkPoint,"startFm_Lss17"
+<ALstart17 + PulseLStart + PulseDuration - mfmsub_length>=>checkPoint,"endFm_Lss17";
+;
+<ALstart18 + PulseLStart + PulseDuration/2>=>checkPoint,"startFm_Lss18"
+<ALstart18 + PulseLStart + PulseDuration - mfmsub_length>=>checkPoint,"endFm_Lss18";
 ;******************* Ft' definition **********************************
 ;
 <ALstart1 + PulseLStart - PulseDuration>=>checkPoint,"startFt_Lss1"
@@ -213,4 +239,13 @@ Last + <0s, 1s .. 5s>=>mfmsub
 ;
 <ALstart15 + PulseLStart - PulseDuration>=>checkPoint,"startFt_Lss15"
 <ALstart15 + PulseLStart - PulseDuration/2 + mfmsub_length>=>checkPoint,"endFt_Lss15";
+;
+<ALstart16 + PulseLStart - PulseDuration>=>checkPoint,"startFt_Lss16"
+<ALstart16 + PulseLStart - PulseDuration/2 + mfmsub_length>=>checkPoint,"endFt_Lss16";
+;
+<ALstart17 + PulseLStart - PulseDuration>=>checkPoint,"startFt_Lss17"
+<ALstart17 + PulseLStart - PulseDuration/2 + mfmsub_length>=>checkPoint,"endFt_Lss17";
+;
+<ALstart18 + PulseLStart - PulseDuration>=>checkPoint,"startFt_Lss18"
+<ALstart18 + PulseLStart - PulseDuration/2 + mfmsub_length>=>checkPoint,"endFt_Lss18";
 ;END ******************************************************************
